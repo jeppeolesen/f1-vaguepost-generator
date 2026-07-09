@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 Vaguepost Generator 🏎️👀</title>
+  <meta name="description" content="Generate random F1 rumours and cryptic paddock vagueposts for Twitter/X. Not real. Probably." />
+  <meta property="og:title" content="F1 Vaguepost Generator" />
+  <meta property="og:description" content="Random F1 rumours & cryptic paddock vagueposts. Deploy silly season chaos with one click." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>" />
+</head>
+<body>
+  <div class="track-lines" aria-hidden="true"></div>
+
+  <main class="container">
+    <header class="hero">
+      <h1><span class="flag">🏁</span> F1 Vaguepost<br /><span class="accent">Generator</span></h1>
+      <p class="subtitle">Cryptic paddock rumours &amp; "if you know, you know" energy — on tap. Deploy silly season chaos, no sources required.</p>
+    </header>
+
+    <section class="controls" aria-label="Generator controls">
+      <div class="mode-toggle" role="tablist" aria-label="Post type">
+        <button class="mode-btn active" data-mode="mixed" role="tab" aria-selected="true">🎲 Surprise me</button>
+        <button class="mode-btn" data-mode="rumour" role="tab" aria-selected="false">📰 Rumour</button>
+        <button class="mode-btn" data-mode="vague" role="tab" aria-selected="false">👀 Vaguepost</button>
+      </div>
+
+      <button id="generate" class="generate-btn">Generate 🏎️💨</button>
+    </section>
+
+    <!-- Fake tweet card -->
+    <section class="tweet-card" id="tweet-card" aria-live="polite">
+      <div class="tweet-header">
+        <img class="avatar" id="avatar" alt="" />
+        <div class="tweet-user">
+          <div class="name-row">
+            <span class="display-name" id="display-name">F1 Paddock Insider</span>
+            <span class="verified" title="Definitely a real insider">✔</span>
+          </div>
+          <span class="handle" id="handle">@f1_paddock_ITK</span>
+        </div>
+        <span class="x-logo" aria-hidden="true">𝕏</span>
+      </div>
+
+      <p class="tweet-text" id="tweet-text">Hit generate and watch the paddock descend into chaos.</p>
+
+      <div class="tweet-meta">
+        <span id="timestamp">Just now</span> · <span class="views" id="views">2.1M Views</span>
+      </div>
+
+      <div class="tweet-stats">
+        <span class="stat" title="Replies">💬 <span id="stat-replies">1.2K</span></span>
+        <span class="stat" title="Retweets">🔁 <span id="stat-rts">8.4K</span></span>
+        <span class="stat" title="Likes">❤️ <span id="stat-likes">42K</span></span>
+        <span class="stat" title="Bookmarks">🔖 <span id="stat-bookmarks">3.1K</span></span>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="copy" class="action-btn">📋 Copy text</button>
+      <a id="tweet-it" class="action-btn primary" href="#" target="_blank" rel="noopener">𝕏 Post it</a>
+    </div>
+
+    <p class="disclaimer">⚠️ 100% fabricated. Any resemblance to actual silly season is purely coincidental (and honestly, indistinguishable).</p>
+  </main>
+
+  <footer class="footer">
+    <p>Built for the group chat. Not affiliated with Formula 1, the FIA, or any actual person who knows anything.</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
