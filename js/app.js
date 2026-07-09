@@ -15,6 +15,63 @@
   const selected = { drivers: new Set(), teams: new Set() };
   const poolFor = (key, all) => (selected[key].size ? [...selected[key]] : all);
 
+  // ---- Custom (user-added) drivers & teams, persisted per-device ----
+  const CUSTOM_KEYS = { drivers: "f1vp_custom_drivers", teams: "f1vp_custom_teams" };
+  const custom = { drivers: [], teams: [] };
+  const chipContainerFor = (key) => (key === "drivers" ? "driver-chips" : "team-chips");
+
+  const existsIn = (key, name) => {
+    const n = name.trim().toLowerCase();
+    return DATA[key].some((x) => x.toLowerCase() === n);
+  };
+
+  // Merge saved custom entries into the live DATA pools so they flow into
+  // every template (rumours + vagueposts), not just the focus chips.
+  function loadCustom() {
+    for (const key of ["drivers", "teams"]) {
+      let arr;
+      try { arr = JSON.parse(localStorage.getItem(CUSTOM_KEYS[key]) || "[]"); }
+      catch (e) { arr = []; }
+      if (!Array.isArray(arr)) continue;
+      arr.forEach((name) => {
+        if (typeof name !== "string") return;
+        const n = name.trim();
+        if (n && !existsIn(key, n)) { custom[key].push(n); DATA[key].push(n); }
+      });
+    }
+  }
+
+  function saveCustom(key) {
+    try { localStorage.setItem(CUSTOM_KEYS[key], JSON.stringify(custom[key])); }
+    catch (e) { /* storage unavailable or full — keep working in-memory */ }
+  }
+
+  function addCustom(key, name) {
+    const n = name.trim();
+    if (!n || existsIn(key, n)) return false;
+    custom[key].push(n);
+    DATA[key].push(n);
+    saveCustom(key);
+    const chip = addChip($(chipContainerFor(key)), n, key, true);
+    // Auto-focus the freshly added entry so it's immediately in the mix.
+    selected[key].add(n);
+    chip.classList.add("on");
+    chip.setAttribute("aria-pressed", "true");
+    updateFocusSummary();
+    generate();
+    return true;
+  }
+
+  function removeCustom(key, name, chipEl) {
+    custom[key] = custom[key].filter((x) => x !== name);
+    DATA[key] = DATA[key].filter((x) => x !== name);
+    selected[key].delete(name);
+    saveCustom(key);
+    chipEl.remove();
+    updateFocusSummary();
+    generate();
+  }
+
   const VAGUE_LABELS = {
     1: "Barely subtle",
     2: "Naming names",
@@ -371,33 +428,72 @@
     $("focus-summary").textContent = parts.length ? parts.join(" · ") : "Everyone";
   }
 
-  function buildChips(containerId, items, key) {
-    const container = $(containerId);
-    items.forEach((item) => {
-      const chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "chip";
-      chip.textContent = item;
-      chip.setAttribute("aria-pressed", "false");
-      chip.addEventListener("click", () => {
-        if (selected[key].has(item)) {
-          selected[key].delete(item);
-          chip.classList.remove("on");
-          chip.setAttribute("aria-pressed", "false");
-        } else {
-          selected[key].add(item);
-          chip.classList.add("on");
-          chip.setAttribute("aria-pressed", "true");
-        }
-        updateFocusSummary();
-        generate();
-      });
-      container.appendChild(chip);
+  function addChip(container, item, key, isCustom) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip" + (isCustom ? " custom" : "");
+    chip.setAttribute("aria-pressed", "false");
+
+    const label = document.createElement("span");
+    label.className = "chip-label";
+    label.textContent = item;
+    chip.appendChild(label);
+
+    if (isCustom) {
+      const x = document.createElement("span");
+      x.className = "chip-x";
+      x.textContent = "×";
+      x.title = "Remove";
+      x.setAttribute("aria-hidden", "true");
+      chip.appendChild(x);
+    }
+
+    chip.addEventListener("click", (e) => {
+      if (isCustom && e.target.classList.contains("chip-x")) {
+        removeCustom(key, item, chip);
+        return;
+      }
+      if (selected[key].has(item)) {
+        selected[key].delete(item);
+        chip.classList.remove("on");
+        chip.setAttribute("aria-pressed", "false");
+      } else {
+        selected[key].add(item);
+        chip.classList.add("on");
+        chip.setAttribute("aria-pressed", "true");
+      }
+      updateFocusSummary();
+      generate();
     });
+    container.appendChild(chip);
+    return chip;
   }
 
+  function buildChips(containerId, items, key) {
+    const container = $(containerId);
+    items.forEach((item) => addChip(container, item, key, custom[key].includes(item)));
+  }
+
+  loadCustom();
   buildChips("driver-chips", DATA.drivers, "drivers");
   buildChips("team-chips", DATA.teams, "teams");
+
+  // Add-your-own forms (one per group).
+  document.querySelectorAll(".chip-add").forEach((form) => {
+    const key = form.dataset.add;
+    const input = form.querySelector(".chip-add-input");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const value = input.value;
+      if (addCustom(key, value)) {
+        input.value = "";
+      } else {
+        // Duplicate or empty — flash the field, keep the text for editing.
+        input.focus();
+        input.select();
+      }
+    });
+  });
 
   document.querySelectorAll(".focus-clear").forEach((btn) => {
     btn.addEventListener("click", () => {

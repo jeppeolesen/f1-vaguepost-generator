@@ -207,6 +207,59 @@ body {
   font-weight: 600;
 }
 
+/* Custom (user-added) chips: dashed accent + inline remove button. */
+.chip.custom { border-style: dashed; padding-right: 7px; }
+.chip.custom.on { border-style: solid; }
+
+.chip-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-left: 6px;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  line-height: 1;
+  color: inherit;
+  opacity: 0.55;
+  transition: opacity 0.15s, background 0.15s;
+}
+.chip-x:hover { opacity: 1; background: rgba(255, 255, 255, 0.18); }
+
+/* Add-your-own row */
+.chip-add { display: flex; gap: 7px; margin-top: 10px; }
+
+.chip-add-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 7px 12px;
+  border-radius: 999px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.chip-add-input::placeholder { color: var(--text-dim); }
+.chip-add-input:focus { border-color: var(--f1-red); }
+
+.chip-add-btn {
+  border: 1px solid var(--card-border);
+  background: var(--bg-2);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.chip-add-btn:hover { background: #1e1e28; border-color: #3a3a48; }
+
 .focus-hint {
   color: var(--text-dim);
   font-size: 0.78rem;

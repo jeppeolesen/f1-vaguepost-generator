@@ -40,6 +40,11 @@
               <button type="button" class="focus-clear" data-clear="drivers">clear</button>
             </div>
             <div class="chip-row" id="driver-chips"></div>
+            <form class="chip-add" data-add="drivers" autocomplete="off">
+              <input type="text" class="chip-add-input" maxlength="24"
+                     placeholder="Add your own driver…" aria-label="Add a custom driver" />
+              <button type="submit" class="chip-add-btn" aria-label="Add driver">Add</button>
+            </form>
           </div>
           <div class="focus-group">
             <div class="focus-group-head">
@@ -47,8 +52,13 @@
               <button type="button" class="focus-clear" data-clear="teams">clear</button>
             </div>
             <div class="chip-row" id="team-chips"></div>
+            <form class="chip-add" data-add="teams" autocomplete="off">
+              <input type="text" class="chip-add-input" maxlength="24"
+                     placeholder="Add your own team…" aria-label="Add a custom team" />
+              <button type="submit" class="chip-add-btn" aria-label="Add team">Add</button>
+            </form>
           </div>
-          <p class="focus-hint">Nothing selected = everyone's fair game.</p>
+          <p class="focus-hint">Nothing selected = everyone's fair game. Add your own drivers &amp; teams — they're saved on this device.</p>
         </div>
       </details>
 
