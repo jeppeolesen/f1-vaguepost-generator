@@ -138,6 +138,17 @@
     $("avatar").src = "data:image/svg+xml;utf8," + encodeURIComponent(svg);
   }
 
+  function setTimestamp() {
+    const r = Math.random();
+    let t;
+    if (r < 0.12) t = "Just now";
+    else if (r < 0.30) t = randInt(5, 59) + "s";
+    else if (r < 0.65) t = randInt(1, 59) + "m";
+    else if (r < 0.90) t = randInt(1, 23) + "h";
+    else t = randInt(1, 6) + "d";
+    $("timestamp").textContent = t;
+  }
+
   function setStats() {
     const likes = randInt(1200, 90000);
     $("stat-likes").textContent = formatCount(likes);
@@ -154,6 +165,7 @@
 
     setPersona();
     setStats();
+    setTimestamp();
 
     // Little replay animation.
     const card = $("tweet-card");
