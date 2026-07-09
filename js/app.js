@@ -89,6 +89,32 @@
     return fill(rand(DATA.rumours));
   }
 
+  // Capitalise the first letter of the tweet and the first letter after
+  // sentence-ending punctuation. Runs on the fully-filled text so it works
+  // even when a template starts with a token. Leaves mid-sentence lowercase
+  // (the intentional vaguepost voice), proper nouns, and ALL-CAPS intact;
+  // skips decimals (0.3) and ellipses (...).
+  function properCase(s) {
+    s = s.replace(/\bi\b/g, "I"); // pronoun (also covers i'm, i've, i'll, i'd)
+    const a = Array.from(s);
+    let cap = true; // waiting to capitalise the next letter
+    for (let i = 0; i < a.length; i++) {
+      const c = a[i];
+      if (cap) {
+        if (/\p{L}/u.test(c)) { if (/\p{Ll}/u.test(c)) a[i] = c.toUpperCase(); cap = false; }
+        else if (/\p{N}/u.test(c)) { cap = false; } // sentence starts with a number
+        // otherwise (space, quote, emoji, punctuation): keep waiting
+      }
+      if (c === "." || c === "!" || c === "?") {
+        const prev = a[i - 1] || "", next = a[i + 1] || "";
+        if (c === "." && (prev === "." || next === ".")) continue;     // ellipsis
+        if (c === "." && /\d/.test(prev) && /\d/.test(next)) continue; // decimal
+        cap = true;
+      }
+    }
+    return a.join("");
+  }
+
   function formatCount(n) {
     if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
     if (n >= 1000) return (n / 1000).toFixed(1) + "K";
@@ -118,7 +144,7 @@
   }
 
   function generate() {
-    currentText = pickTemplate();
+    currentText = properCase(pickTemplate());
     const el = $("tweet-text");
     el.textContent = currentText;
 
