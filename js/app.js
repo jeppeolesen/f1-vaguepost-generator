@@ -121,16 +121,20 @@
     return String(n);
   }
 
+  // Current avatar look, kept so the screenshot canvas can redraw it.
+  let avatarHue = 0, avatarEmoji = "🏎️";
+
   function setPersona() {
     const p = rand(DATA.personas);
     $("display-name").textContent = p.name;
     $("handle").textContent = "@" + p.handle;
     // Deterministic emoji avatar via inline SVG (no external requests → GH Pages friendly).
-    const hue = randInt(0, 360);
+    avatarHue = randInt(0, 360);
+    avatarEmoji = p.emoji;
     const svg =
       `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>` +
-      `<rect width='100' height='100' rx='50' fill='hsl(${hue},70%,45%)'/>` +
-      `<text x='50' y='68' font-size='52' text-anchor='middle'>${p.emoji}</text></svg>`;
+      `<rect width='100' height='100' rx='50' fill='hsl(${avatarHue},70%,45%)'/>` +
+      `<text x='50' y='68' font-size='52' text-anchor='middle'>${avatarEmoji}</text></svg>`;
     $("avatar").src = "data:image/svg+xml;utf8," + encodeURIComponent(svg);
   }
 
@@ -150,11 +154,6 @@
 
     setPersona();
     setStats();
-
-    // Update share link.
-    const share = "https://twitter.com/intent/tweet?text=" +
-      encodeURIComponent(currentText);
-    $("tweet-it").href = share;
 
     // Little replay animation.
     const card = $("tweet-card");
@@ -188,6 +187,141 @@
     }
   }
 
+  // ---- Screenshot: redraw the tweet card onto a canvas ----
+  const CARD_FONT = '"Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif';
+  const font = (weight, size) => `${weight} ${size}px ${CARD_FONT}`;
+
+  function wrapText(ctx, text, maxWidth) {
+    const words = text.split(" ");
+    const lines = [];
+    let line = "";
+    for (const w of words) {
+      const test = line ? line + " " + w : w;
+      if (line && ctx.measureText(test).width > maxWidth) { lines.push(line); line = w; }
+      else line = test;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function buildCardCanvas() {
+    const S = 2, W = 600, PAD = 24, LINE_H = 34;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    ctx.font = font(500, 26);
+    const lines = wrapText(ctx, currentText, W - PAD * 2);
+
+    const textTop = PAD + 48 + 16;
+    const textBottom = textTop + lines.length * LINE_H;
+    const metaY = textBottom + 20;
+    const sepY = metaY + 14;
+    const statsY = sepY + 28;
+    const H = statsY + 20;
+
+    canvas.width = W * S;
+    canvas.height = H * S;
+    ctx.scale(S, S);
+    ctx.textBaseline = "alphabetic";
+
+    // card background
+    roundRect(ctx, 0.5, 0.5, W - 1, H - 1, 16);
+    ctx.fillStyle = "#16161e"; ctx.fill();
+    ctx.strokeStyle = "#2a2a35"; ctx.lineWidth = 1; ctx.stroke();
+
+    // avatar
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(PAD + 24, PAD + 24, 24, 0, Math.PI * 2);
+    ctx.fillStyle = `hsl(${avatarHue},70%,45%)`; ctx.fill();
+    ctx.font = font(400, 28); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(avatarEmoji, PAD + 24, PAD + 26);
+    ctx.restore();
+
+    // name + verified + handle
+    const nameX = PAD + 48 + 12;
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+    ctx.font = font(700, 17); ctx.fillStyle = "#f3f3f5";
+    const name = $("display-name").textContent;
+    ctx.fillText(name, nameX, PAD + 20);
+    const nameW = ctx.measureText(name).width;
+    ctx.fillStyle = "#1d9bf0"; ctx.font = font(700, 14);
+    ctx.fillText("✔", nameX + nameW + 5, PAD + 20);
+    ctx.font = font(400, 15); ctx.fillStyle = "#8a8a97";
+    ctx.fillText($("handle").textContent, nameX, PAD + 40);
+
+    // X logo (top-right)
+    ctx.font = font(700, 22); ctx.fillStyle = "#f3f3f5"; ctx.textAlign = "right";
+    ctx.fillText("𝕏", W - PAD, PAD + 26);
+    ctx.textAlign = "left";
+
+    // tweet text
+    ctx.font = font(500, 26); ctx.fillStyle = "#f3f3f5";
+    lines.forEach((ln, i) => ctx.fillText(ln, PAD, textTop + 26 + i * LINE_H));
+
+    // meta line
+    ctx.font = font(400, 15); ctx.fillStyle = "#8a8a97";
+    ctx.fillText($("timestamp").textContent + " · " + $("views").textContent, PAD, metaY);
+
+    // separator
+    ctx.strokeStyle = "#2a2a35"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PAD, sepY); ctx.lineTo(W - PAD, sepY); ctx.stroke();
+
+    // stats row
+    ctx.font = font(400, 15); ctx.fillStyle = "#8a8a97";
+    const stats = [
+      "💬 " + $("stat-replies").textContent,
+      "🔁 " + $("stat-rts").textContent,
+      "❤️ " + $("stat-likes").textContent,
+      "🔖 " + $("stat-bookmarks").textContent
+    ];
+    const colW = (W - PAD * 2) / 4;
+    stats.forEach((s, i) => ctx.fillText(s, PAD + i * colW, statsY));
+
+    return canvas;
+  }
+
+  function copyScreenshot() {
+    const btn = $("copy-shot");
+    const original = btn.dataset.label || btn.textContent;
+    btn.dataset.label = original;
+    const done = (msg) => { btn.textContent = msg; setTimeout(() => (btn.textContent = original), 1600); };
+    const canvas = buildCardCanvas();
+    const toBlob = () => new Promise((res) => canvas.toBlob(res, "image/png"));
+
+    // Preferred: copy image to clipboard. Pass a Promise<Blob> to ClipboardItem
+    // synchronously so Safari keeps it inside the user gesture.
+    if (navigator.clipboard && window.ClipboardItem) {
+      try {
+        const item = new ClipboardItem({ "image/png": toBlob() });
+        navigator.clipboard.write([item]).then(() => done("✅ Copied!")).catch(download);
+        return;
+      } catch (e) { /* fall through to download */ }
+    }
+    download();
+
+    function download() {
+      toBlob().then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "f1-vaguepost.png";
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+        done("⬇️ Saved image");
+      });
+    }
+  }
+
   // ---- Wire up ----
   document.querySelectorAll(".mode-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -213,6 +347,7 @@
 
   $("generate").addEventListener("click", generate);
   $("copy").addEventListener("click", copyText);
+  $("copy-shot").addEventListener("click", copyScreenshot);
 
   // ---- Focus filter chips ----
   function updateFocusSummary() {
