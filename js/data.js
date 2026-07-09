@@ -61,7 +61,37 @@ const DATA = {
     { name: "Paddock Club Leaks", handle: "paddockleaks", emoji: "🔓" },
     { name: "Tenth Hunter", handle: "tenthhunter", emoji: "⏱️" },
     { name: "Formula Rumours", handle: "formularumours", emoji: "🌀" },
-    { name: "Marbles Off Line", handle: "marbles_offline", emoji: "⚫" }
+    { name: "Marbles Off Line", handle: "marbles_offline", emoji: "⚫" },
+    // Parodies of aggregator accounts & vaguepost archetypes.
+    { name: "WTAF1", handle: "WTAF1_", emoji: "🤯" },
+    { name: "Planet F0", handle: "planetf0", emoji: "🪐" },
+    { name: "Chequered Fact", handle: "chequeredfact", emoji: "🏁" },
+    { name: "Tummy Data", handle: "tummydata_f1", emoji: "📊" },
+    { name: "Deadline Day Delta", handle: "deadlinedelta", emoji: "⏳" },
+    { name: "Apex Insider", handle: "apexinsider", emoji: "📐" },
+    { name: "F1 Troll (unofficial)", handle: "f1_troII", emoji: "👹" },
+    { name: "Overtake Oracle", handle: "overtakeoracle", emoji: "🔮" },
+    { name: "Slipstream Source", handle: "slipstream_src", emoji: "💨" },
+    { name: "Pitwall Prophet", handle: "pitwallprophet", emoji: "📿" },
+    { name: "Sector Two Says", handle: "sectortwosays", emoji: "🟣" },
+    { name: "Reliable Paddock Man", handle: "reliablepaddock", emoji: "🧢" },
+    { name: "Purple Sector Post", handle: "purplesectorpost", emoji: "🟪" },
+    { name: "Backmarker Bulletin", handle: "backmarkerbtn", emoji: "🐌" },
+    // Parodies of real accounts, journalists & personalities.
+    { name: "Ned's Notebook", handle: "nedsnotebook", emoji: "📓" },
+    { name: "GrandPrix Minus", handle: "grandprixminus", emoji: "➖" },
+    { name: "RacingNews366", handle: "racingnews366", emoji: "🗞️" },
+    { name: "Ski Sports F1", handle: "skisportsf1", emoji: "⛷️" },
+    { name: "Autospot", handle: "autospot_", emoji: "🔭" },
+    { name: "The Race (Condition)", handle: "theracecondition", emoji: "🏎️" },
+    { name: "Motorsport.con", handle: "motorsport_con", emoji: "🎭" },
+    { name: "Lando Updates", handle: "landoupdatez", emoji: "🍦" },
+    { name: "Peter Windscreen", handle: "peterwindscreen", emoji: "🪟" },
+    { name: "The Judge 14", handle: "thejudge14", emoji: "⚖️" },
+    { name: "Lights Out Leaks", handle: "lightsoutleaks", emoji: "🔴" },
+    { name: "RacingLounge247", handle: "racinglounge247", emoji: "🛋️" },
+    { name: "Gym Illman", handle: "gym_illman", emoji: "📸" },
+    { name: "Will Buttons", handle: "will_buttons", emoji: "🎙️" }
   ],
 
   // ---- Templates. {tokens} resolved by app.js against the banks above. ----
