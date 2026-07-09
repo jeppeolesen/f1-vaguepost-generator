@@ -53,6 +53,7 @@
       "{bodyPart}": rand(DATA.bodyParts),
       "{vibe}": rand(DATA.vibes),
       "{timeframe}": rand(DATA.timeframes),
+      "{window}": rand(DATA.window),
       "{emoji}": rand(DATA.cryptic),
       "{year}": String(randInt(2026, 2028)),
       "{tenths}": (randInt(2, 9) / 10).toFixed(1),
