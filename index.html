@@ -28,6 +28,30 @@
         <button class="mode-btn" data-mode="vague" role="tab" aria-selected="false">👀 Vaguepost</button>
       </div>
 
+      <details class="focus-panel" id="focus-panel">
+        <summary>
+          🎯 Focus on specific drivers &amp; teams
+          <span class="focus-summary" id="focus-summary">Everyone</span>
+        </summary>
+        <div class="focus-body">
+          <div class="focus-group">
+            <div class="focus-group-head">
+              <span class="focus-label">Drivers</span>
+              <button type="button" class="focus-clear" data-clear="drivers">clear</button>
+            </div>
+            <div class="chip-row" id="driver-chips"></div>
+          </div>
+          <div class="focus-group">
+            <div class="focus-group-head">
+              <span class="focus-label">Teams</span>
+              <button type="button" class="focus-clear" data-clear="teams">clear</button>
+            </div>
+            <div class="chip-row" id="team-chips"></div>
+          </div>
+          <p class="focus-hint">Nothing selected = everyone's fair game.</p>
+        </div>
+      </details>
+
       <div class="vague-control hidden" id="vague-control">
         <div class="vague-label-row">
           <span class="vague-title">🌫️ Vagueness</span>

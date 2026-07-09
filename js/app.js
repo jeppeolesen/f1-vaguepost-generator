@@ -11,6 +11,10 @@
   let vagueLevel = 3;
   let currentText = "";
 
+  // Optional focus filters. Empty set = no filter (use everyone).
+  const selected = { drivers: new Set(), teams: new Set() };
+  const poolFor = (key, all) => (selected[key].size ? [...selected[key]] : all);
+
   const VAGUE_LABELS = {
     1: "Barely subtle",
     2: "Naming names",
@@ -22,14 +26,18 @@
   /* Resolve {tokens} in a template. Two distinct drivers guaranteed for
      templates that reference both {driver} and {driver2}. */
   function fill(template) {
-    const driver = rand(DATA.drivers);
-    let driver2 = rand(DATA.drivers);
-    while (driver2 === driver) driver2 = rand(DATA.drivers);
+    const driverPool = poolFor("drivers", DATA.drivers);
+    const driver = rand(driverPool);
+    // For a distinct second driver, fall back to the full grid if the
+    // focused pool has fewer than two names.
+    const secondPool = driverPool.length >= 2 ? driverPool : DATA.drivers;
+    let driver2 = rand(secondPool);
+    while (driver2 === driver) driver2 = rand(secondPool);
 
     const map = {
       "{driver}": driver,
       "{driver2}": driver2,
-      "{team}": rand(DATA.teams),
+      "{team}": rand(poolFor("teams", DATA.teams)),
       "{nationality}": rand(DATA.nationalities),
       "{gp}": rand(DATA.grandsPrix),
       "{journalist}": rand(DATA.journalists),
@@ -164,9 +172,62 @@
   $("generate").addEventListener("click", generate);
   $("copy").addEventListener("click", copyText);
 
+  // ---- Focus filter chips ----
+  function updateFocusSummary() {
+    const d = selected.drivers.size;
+    const t = selected.teams.size;
+    const parts = [];
+    if (d) parts.push(d + (d === 1 ? " driver" : " drivers"));
+    if (t) parts.push(t + (t === 1 ? " team" : " teams"));
+    $("focus-summary").textContent = parts.length ? parts.join(" · ") : "Everyone";
+  }
+
+  function buildChips(containerId, items, key) {
+    const container = $(containerId);
+    items.forEach((item) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = item;
+      chip.setAttribute("aria-pressed", "false");
+      chip.addEventListener("click", () => {
+        if (selected[key].has(item)) {
+          selected[key].delete(item);
+          chip.classList.remove("on");
+          chip.setAttribute("aria-pressed", "false");
+        } else {
+          selected[key].add(item);
+          chip.classList.add("on");
+          chip.setAttribute("aria-pressed", "true");
+        }
+        updateFocusSummary();
+        generate();
+      });
+      container.appendChild(chip);
+    });
+  }
+
+  buildChips("driver-chips", DATA.drivers, "drivers");
+  buildChips("team-chips", DATA.teams, "teams");
+
+  document.querySelectorAll(".focus-clear").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.clear;
+      selected[key].clear();
+      document.querySelectorAll(`#${key === "drivers" ? "driver" : "team"}-chips .chip`)
+        .forEach((c) => {
+          c.classList.remove("on");
+          c.setAttribute("aria-pressed", "false");
+        });
+      updateFocusSummary();
+      generate();
+    });
+  });
+
   // Spacebar = generate (unless focused on the share link).
+  const INTERACTIVE = ["A", "BUTTON", "INPUT", "SUMMARY", "TEXTAREA"];
   document.addEventListener("keydown", (e) => {
-    if (e.code === "Space" && e.target.tagName !== "A") {
+    if (e.code === "Space" && !INTERACTIVE.includes(e.target.tagName)) {
       e.preventDefault();
       generate();
     }
