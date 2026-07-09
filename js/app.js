@@ -57,8 +57,7 @@
       "{emoji}": rand(DATA.cryptic),
       "{year}": String(randInt(2026, 2028)),
       "{tenths}": (randInt(2, 9) / 10).toFixed(1),
-      "{money}": String(randInt(20, 300)),
-      "{age}": String(randInt(16, 19))
+      "{money}": String(randInt(20, 300))
     };
 
     // Resolve iteratively so tokens nested inside a value (e.g. a timeframe
