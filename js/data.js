@@ -14,7 +14,11 @@ const DATA = {
 
   nationalities: [
     "British", "Dutch", "Spanish", "Monegasque", "Australian", "French",
-    "German", "Italian", "Mexican", "Danish", "Thai", "Japanese", "Finnish"
+    "German", "Italian", "Mexican", "Danish", "Thai", "Japanese", "Finnish",
+    "Brazilian", "Canadian", "American", "Argentine", "Belgian", "Swiss",
+    "Austrian", "Swedish", "Norwegian", "Chinese", "Indian", "Portuguese",
+    "Irish", "Colombian", "South African", "Hungarian", "Czech", "Polish",
+    "Russian", "Turkish", "Estonian", "Indonesian", "New Zealand", "Emirati"
   ],
 
   grandsPrix: ["Monaco", "Silverstone", "Monza", "Spa", "Suzuka", "Bahrain", "Jeddah", "Miami", "Vegas", "Singapore", "Austin", "Interlagos", "Zandvoort", "Hungaroring", "Baku", "Imola", "Qatar", "Abu Dhabi"],
