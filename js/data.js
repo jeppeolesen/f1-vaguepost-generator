@@ -82,35 +82,52 @@ const DATA = {
     "Told the {team} garage went very quiet after {driver} said something on the radio at {gp}."
   ],
 
+  // Vagueposts scored by vagueness (1 = names names, 5 = pure cryptic void).
+  // The vagueness slider filters to a level. Keep every level stocked.
   vagueposts: [
-    "someone in that garage isn't happy 👀",
-    "if you know, you know.",
-    "certain people need to have a look in the mirror.",
-    "well. well well well.",
-    "watch this space 🍿",
-    "not everything is as it seems in {team} right now.",
-    "a certain {nationality} driver has some explaining to do.",
-    "the paddock is talking. that's all i'll say.",
-    "some of you are going to look very silly by {gp}. 🤡",
-    "interesting few days ahead. keep your notifications on.",
-    "so THAT'S why {driver} was smiling. 😏",
-    "the timing of all this... no coincidence.",
-    "certain garages should be careful what they wish for.",
-    "you'll understand this tweet in about three weeks.",
-    "not saying anything. just saying. 🤐",
-    "the {vibe} energy from {team} today was very telling.",
-    "screenshot this one. that's all i ask.",
-    "funny how quiet it's gone since {gp}, isn't it?",
-    "{driver} is {vibe}. and i think that says it all.",
-    "big if true. and it's true. 👀",
-    "we are NOT ready for what's coming.",
-    "somebody's phone is about to blow up. it's not mine. it's theirs.",
-    "the people who need to know, already know.",
-    "i've said too much. deleting later. 🫡",
-    "remember this tweet.",
-    "{team} know exactly what they're doing. or do they. 🤔",
-    "the real story of {gp} hasn't been told yet.",
-    "you can feel it, can't you.",
-    "no notes. no context. just vibes. {driver} 👀"
+    // --- 1: barely subtle (basically a rumour with a wink) ---
+    { text: "{driver} at {team}. that's the tweet. work it out. 👀", vague: 1 },
+    { text: "keep an eye on the {team} garage at {gp}. that's all. 👀", vague: 1 },
+    { text: "{driver} and {team}. remember where you heard it. 📌", vague: 1 },
+    { text: "{driver} to {team}. i won't say more than that. 🤐", vague: 1 },
+
+    // --- 2: names a name, withholds the point ---
+    { text: "not everything is as it seems in {team} right now.", vague: 2 },
+    { text: "some of you are going to look very silly by {gp}. 🤡", vague: 2 },
+    { text: "so THAT'S why {driver} was smiling. 😏", vague: 2 },
+    { text: "the {vibe} energy from {team} today was very telling.", vague: 2 },
+    { text: "funny how quiet it's gone since {gp}, isn't it?", vague: 2 },
+    { text: "{driver} is {vibe}. and i think that says it all.", vague: 2 },
+    { text: "{team} know exactly what they're doing. or do they. 🤔", vague: 2 },
+    { text: "the real story of {gp} hasn't been told yet.", vague: 2 },
+
+    // --- 3: a shape, no name ---
+    { text: "someone in that garage isn't happy 👀", vague: 3 },
+    { text: "a certain {nationality} driver has some explaining to do.", vague: 3 },
+    { text: "no notes. no context. just vibes. {driver} 👀", vague: 3 },
+    { text: "a certain garage was very quiet today. you can guess which. 👀", vague: 3 },
+    { text: "someone made a phone call they'll regret. 📞", vague: 3 },
+
+    // --- 4: gesturing at nothing in particular ---
+    { text: "certain people need to have a look in the mirror.", vague: 4 },
+    { text: "the paddock is talking. that's all i'll say.", vague: 4 },
+    { text: "interesting few days ahead. keep your notifications on.", vague: 4 },
+    { text: "the timing of all this... no coincidence.", vague: 4 },
+    { text: "certain garages should be careful what they wish for.", vague: 4 },
+    { text: "big if true. and it's true. 👀", vague: 4 },
+    { text: "we are NOT ready for what's coming.", vague: 4 },
+    { text: "somebody's phone is about to blow up. it's not mine. it's theirs.", vague: 4 },
+    { text: "i've said too much. deleting later. 🫡", vague: 4 },
+
+    // --- 5: pure cryptic void, zero information ---
+    { text: "if you know, you know.", vague: 5 },
+    { text: "well. well well well.", vague: 5 },
+    { text: "watch this space 🍿", vague: 5 },
+    { text: "you'll understand this tweet in about three weeks.", vague: 5 },
+    { text: "not saying anything. just saying. 🤐", vague: 5 },
+    { text: "screenshot this one. that's all i ask.", vague: 5 },
+    { text: "the people who need to know, already know.", vague: 5 },
+    { text: "remember this tweet.", vague: 5 },
+    { text: "you can feel it, can't you.", vague: 5 }
   ]
 };

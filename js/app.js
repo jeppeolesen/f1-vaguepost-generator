@@ -8,7 +8,16 @@
   const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
   let mode = "mixed";
+  let vagueLevel = 3;
   let currentText = "";
+
+  const VAGUE_LABELS = {
+    1: "Barely subtle",
+    2: "Naming names",
+    3: "A shape, no name",
+    4: "Gesturing at nothing",
+    5: "Pure cryptic void"
+  };
 
   /* Resolve {tokens} in a template. Two distinct drivers guaranteed for
      templates that reference both {driver} and {driver2}. */
@@ -36,12 +45,24 @@
     return template.replace(/\{[a-zA-Z0-9]+\}/g, (t) => map[t] ?? t);
   }
 
+  // Pick a vaguepost at (or nearest to) the requested vagueness level.
+  function pickVaguepost(level) {
+    let bucket = DATA.vagueposts.filter((v) => v.vague === level);
+    // Widen outward if a level is ever under-stocked.
+    for (let d = 1; bucket.length === 0 && d < 5; d++) {
+      bucket = DATA.vagueposts.filter(
+        (v) => v.vague === level - d || v.vague === level + d
+      );
+    }
+    return rand(bucket).text;
+  }
+
   function pickTemplate() {
     if (mode === "rumour") return fill(rand(DATA.rumours));
-    if (mode === "vague") return fill(rand(DATA.vagueposts));
+    if (mode === "vague") return fill(pickVaguepost(vagueLevel));
     // mixed: weight slightly toward vagueposts, they're the funnier ones.
-    const pool = Math.random() < 0.55 ? DATA.vagueposts : DATA.rumours;
-    return fill(rand(pool));
+    if (Math.random() < 0.55) return fill(rand(DATA.vagueposts).text);
+    return fill(rand(DATA.rumours));
   }
 
   function formatCount(n) {
@@ -127,9 +148,18 @@
       btn.classList.add("active");
       btn.setAttribute("aria-selected", "true");
       mode = btn.dataset.mode;
+      $("vague-control").classList.toggle("hidden", mode !== "vague");
       generate();
     });
   });
+
+  const slider = $("vague-slider");
+  slider.addEventListener("input", () => {
+    vagueLevel = Number(slider.value);
+    $("vague-level-text").textContent = VAGUE_LABELS[vagueLevel];
+  });
+  // Regenerate once the user settles on a value (avoids spamming while dragging).
+  slider.addEventListener("change", generate);
 
   $("generate").addEventListener("click", generate);
   $("copy").addEventListener("click", copyText);

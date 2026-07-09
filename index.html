@@ -28,6 +28,19 @@
         <button class="mode-btn" data-mode="vague" role="tab" aria-selected="false">👀 Vaguepost</button>
       </div>
 
+      <div class="vague-control hidden" id="vague-control">
+        <div class="vague-label-row">
+          <span class="vague-title">🌫️ Vagueness</span>
+          <span class="vague-level" id="vague-level-text">A shape, no name</span>
+        </div>
+        <input type="range" id="vague-slider" min="1" max="5" step="1" value="3"
+               aria-label="How vague should the post be" />
+        <div class="vague-ends">
+          <span>Barely subtle</span>
+          <span>Cryptic void</span>
+        </div>
+      </div>
+
       <button id="generate" class="generate-btn">Generate 🏎️💨</button>
     </section>
 
