@@ -44,13 +44,21 @@
       "{sponsor}": rand(DATA.sponsors),
       "{bodyPart}": rand(DATA.bodyParts),
       "{vibe}": rand(DATA.vibes),
+      "{timeframe}": rand(DATA.timeframes),
+      "{emoji}": rand(DATA.cryptic),
       "{year}": String(randInt(2026, 2028)),
       "{tenths}": (randInt(2, 9) / 10).toFixed(1),
       "{money}": String(randInt(20, 300)),
       "{age}": String(randInt(16, 19))
     };
 
-    return template.replace(/\{[a-zA-Z0-9]+\}/g, (t) => map[t] ?? t);
+    // Resolve iteratively so tokens nested inside a value (e.g. a timeframe
+    // that contains {gp}) also get filled. Capped to avoid any runaway loop.
+    let out = template;
+    for (let i = 0; i < 4 && /\{[a-zA-Z0-9]+\}/.test(out); i++) {
+      out = out.replace(/\{[a-zA-Z0-9]+\}/g, (t) => map[t] ?? t);
+    }
+    return out;
   }
 
   // Pick a vaguepost at (or nearest to) the requested vagueness level.
