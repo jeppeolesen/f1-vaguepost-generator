@@ -34,10 +34,18 @@
     let driver2 = rand(secondPool);
     while (driver2 === driver) driver2 = rand(secondPool);
 
+    // Same distinct-pair logic for teams (some templates name two teams).
+    const teamPool = poolFor("teams", DATA.teams);
+    const team = rand(teamPool);
+    const secondTeamPool = teamPool.length >= 2 ? teamPool : DATA.teams;
+    let team2 = rand(secondTeamPool);
+    while (team2 === team) team2 = rand(secondTeamPool);
+
     const map = {
       "{driver}": driver,
       "{driver2}": driver2,
-      "{team}": rand(poolFor("teams", DATA.teams)),
+      "{team}": team,
+      "{team2}": team2,
       "{nationality}": rand(DATA.nationalities),
       "{gp}": rand(DATA.grandsPrix),
       "{journalist}": rand(DATA.journalists),
